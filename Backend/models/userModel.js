@@ -7,6 +7,12 @@ class UserModel {
             data: userData
         })
     }
+
+    static async findUserByEmail(email) {
+        return await prisma.user.findUnique({
+            where: { email }
+        });
+    }
 }
 
 module.exports = UserModel; 

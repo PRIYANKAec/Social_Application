@@ -26,6 +26,13 @@ const createUser = async (req, res) => {
             return res.status(400).json({ error: "Validation" });
         }
 
+        const existingUser = await User.findUserByEmail(email);
+
+        if(existingUser)
+        {
+            return res.status(400).json({ error: "User already exists" });
+        }
+
         const saltRounds = 10;
         const hashedPassword = await bcrypt.hash(password, saltRounds);
 
@@ -42,11 +49,11 @@ const createUser = async (req, res) => {
 
         res.status(201).json({ message: "User created successfully.", user: newUser, token : token });
     } catch (error) {
-        console.error("Error creating user:", error);
+        console.error("Error creating user:", error.message);
         if (error.name === 'ValidationError') {
             return res.status(400).json({ error: error.message });
         }
-        res.status(500).json({ error: "An error occurred while creating the user." });
+        res.status(500).json({ error: error.message });
     }
 };
 
