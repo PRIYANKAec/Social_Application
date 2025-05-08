@@ -1,7 +1,7 @@
 const yup = require("yup");
 
 const UserModel = require("../../models/userModel");
-const {comparePassword, generateToken} = require("../../utils/jwtHash");
+const {comparePassword, generateToken} = require("../../MiddleWare/jwtHash");
 
 const userSchema = yup.object().shape({
     email: yup.string().email("Invalid email format").required("Email is required"),
@@ -32,12 +32,12 @@ const signIn = async (req , res) =>{
          const { password: _password, ...userWithoutPassword } = user;
  
          res.status(200).json({
-             message: "Login successful",
+             message: "SignIn successful",
              user: userWithoutPassword,
              token
          });
      } catch (error) {
-         console.error("Login Error:", error);
+         console.error("SignIn Error:", error);
          res.status(500).json({ message: error.message });
      }
     }

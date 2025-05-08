@@ -2,7 +2,7 @@ const bcrypt = require('bcrypt');
 const yup = require('yup');
 
 const User = require('../../models/userModel');
-const generateToken = require('../../utils/jwtHash');
+const { generateToken } = require('../../MiddleWare/jwtHash');
 
 const userSchema = yup.object().shape({
 firstName: yup.string().required().max(50),
