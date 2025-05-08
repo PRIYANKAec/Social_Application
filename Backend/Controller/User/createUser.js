@@ -8,9 +8,9 @@ const userSchema = yup.object().shape({
 firstName: yup.string().required().max(50),
 lastName: yup.string().required().max(50),
 username: yup.string().required('UserName is required'),
-email:yup.string().email('Invalid email format').required('Email is required'),
+email:yup.string().email('Invalid email format').required('Email is required').matches(/^[\w-.]+@(gmail\.com|yahoo\.com|outlook\.com)$/, 'Only gmail.com, yahoo.com, outlook .com is allowed'),
 password: yup.string().required('Password is required').min(6, 'Password should be atleast 6 characters'),
-phoneNumber: yup.string().required('Phone number is required').matches(/^[0-9]+$/, 'Phone number must be digits'),
+phoneNumber: yup.string().required('Phone number is required').matches(/^[0-9]+$/, 'Phone number must be digits').length(10, 'Phone number must be 10 digits'),
 address: yup.string().required('Address is required'),
 })
 
