@@ -10,6 +10,8 @@ lastName: yup.string().required().max(50),
 username: yup.string().required('UserName is required'),
 email:yup.string().email('Invalid email format').required('Email is required'),
 password: yup.string().required('Password is required').min(6, 'Password should be atleast 6 characters'),
+phoneNumber: yup.string().required('Phone number is required').matches(/^[0-9]+$/, 'Phone number must be digits'),
+address: yup.string().required('Address is required'),
 })
 
 
@@ -19,7 +21,7 @@ const createUser = async (req, res) => {
     // Validate request body using Yup
         await userSchema.validate(req.body);
 
-        const { firstName, lastName, username, email, password } = req.body;
+        const { firstName, lastName, username, email, password, phoneNumber, address } = req.body;
 
         // Validate required fields
         if (!username || !email || !password) {
@@ -43,6 +45,8 @@ const createUser = async (req, res) => {
             username,
             email,
             password:hashedPassword,
+            phoneNumber,
+            address
         });
 
         const token = generateToken(newUser);

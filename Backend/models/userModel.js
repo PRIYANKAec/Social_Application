@@ -13,6 +13,13 @@ class UserModel {
             where: { email }
         });
     }
+
+    static async updateUser(email, updateData) {
+        return await prisma.user.update({
+            where: { email },
+            data: updateData
+        });
+    }
 }
 
 module.exports = UserModel; 
