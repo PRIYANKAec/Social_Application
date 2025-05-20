@@ -16,6 +16,7 @@ datasource db {
 //User Details
 model User {
   id             Int       @id @default(autoincrement())
+  role           Role      @default(USER)  
   firstName      String
   lastName       String
   username       String    @unique
@@ -26,18 +27,11 @@ model User {
   wardNumber     Int
   gender         String
   dateOfBirth    DateTime @db.Date
-  issue          issue[]
   createdAt      DateTime  @default(now())
   updatedAt      DateTime  @updatedAt
-  role           Role      @default(USER)
-
-  issueResponse issueResponse[]
+  issue          issue[]
 }
 
-enum Role {
-  USER
-  OFFICIAL
-}
 
 // User reported issues
 model issue {
@@ -45,13 +39,15 @@ model issue {
   userId        Int
   title         String
   description   String
-  location      String
+  Address       String
   status        IssuedStatus @default(PENDING)
   user          User @relation(fields: [userId], references: [id], onDelete: Cascade)
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
 
   issueResponse issueResponse[]
+
+  Official Official[]
 }
 
 // Enum for issue status
@@ -62,6 +58,21 @@ enum IssuedStatus {
   CLOSED
 }
 
+model Official {
+  role           Role      @default(OFFICIAL)
+  id             Int       @id @default(autoincrement())
+  GovernmentId   String    @unique
+  username       String    @unique
+  email          String    @unique
+  password       String
+  designation    String
+  phoneNumber    String    @unique
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+  issueResponse issueResponse[]
+  issue         issue[]
+}
+
 model issueResponse {
    id         Int @id @default(autoincrement())
    issueId    String
@@ -69,8 +80,8 @@ model issueResponse {
    message    String
    createdAt  DateTime @default(now())
 
-  issue     issue @relation(fields: [issueId], references: [id], onDelete: Cascade)
-  admin     User  @relation(fields: [adminId], references: [id], onDelete: Cascade)
+  issue     issue @relation(fields: [issueId], references: [id])
+  official  Official @relation(fields: [adminId], references: [id])
 
     @@index([issueId])
     @@index([adminId])
@@ -86,4 +97,9 @@ model events {
   endDate     DateTime
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
+}
+
+enum Role {
+  USER
+  OFFICIAL
 }
