@@ -20,6 +20,12 @@ class UserModel {
             data: updateData
         });
     }
+
+    static async deleteUser(email) {
+        return await prisma.user.delete({
+            where: { email }
+        });
+    }
 }
 
 module.exports = UserModel; 
