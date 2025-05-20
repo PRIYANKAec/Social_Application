@@ -13,6 +13,7 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+//User Details
 model User {
   id             Int       @id @default(autoincrement())
   firstName      String
@@ -22,12 +23,67 @@ model User {
   password       String
   phoneNumber    String    @unique
   address        String
+  wardNumber     Int
+  gender         String
+  dateOfBirth    DateTime @db.Date
+  issue          issue[]
   createdAt      DateTime  @default(now())
   updatedAt      DateTime  @updatedAt
   role           Role      @default(USER)
+
+  issueResponse issueResponse[]
 }
 
 enum Role {
   USER
   OFFICIAL
+}
+
+// User reported issues
+model issue {
+  id            String @id @default(uuid())
+  userId        Int
+  title         String
+  description   String
+  location      String
+  status        IssuedStatus @default(PENDING)
+  user          User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  issueResponse issueResponse[]
+}
+
+// Enum for issue status
+enum IssuedStatus {
+  PENDING
+  IN_PROGRESS
+  RESOLVED
+  CLOSED
+}
+
+model issueResponse {
+   id         Int @id @default(autoincrement())
+   issueId    String
+   adminId    Int
+   message    String
+   createdAt  DateTime @default(now())
+
+  issue     issue @relation(fields: [issueId], references: [id], onDelete: Cascade)
+  admin     User  @relation(fields: [adminId], references: [id], onDelete: Cascade)
+
+    @@index([issueId])
+    @@index([adminId])
+}
+
+// Events in the Area
+model events {
+  id          Int       @id @default(autoincrement())
+  title       String
+  description String
+  location    String
+  startDate   DateTime
+  endDate     DateTime
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
 }

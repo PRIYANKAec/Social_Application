@@ -3,6 +3,7 @@ const yup = require('yup');
 
 const User = require('../../models/userModel');
 const { generateToken } = require('../../MiddleWare/jwtHash');
+const { parsingDOB } = require('../../utils/parsingDOB');
 
 const userSchema = yup.object().shape({
 firstName: yup.string().required().max(50),
@@ -12,6 +13,9 @@ email:yup.string().email('Invalid email format').required('Email is required').m
 password: yup.string().required('Password is required').min(6, 'Password should be atleast 6 characters'),
 phoneNumber: yup.string().required('Phone number is required').matches(/^[0-9]+$/, 'Phone number must be digits').length(10, 'Phone number must be 10 digits'),
 address: yup.string().required('Address is required'),
+wardNumber: yup.string().required('Ward number is required'),
+dateOfBirth: yup.string().required('Date of birth is required').matches(/^\d{2}-\d{2}-\d{4}$/, 'DOB must be in DD-MM-YYYY format'),
+gender: yup.string().max(10).required(),
 })
 
 
@@ -21,7 +25,7 @@ const createUser = async (req, res) => {
     // Validate request body using Yup
         await userSchema.validate(req.body);
 
-        const { firstName, lastName, username, email, password, phoneNumber, address } = req.body;
+        const { firstName, lastName, username, email, password, phoneNumber, address, wardNumber, dateOfBirth, gender } = req.body;
 
         // Validate required fields
         if (!username || !email || !password) {
@@ -38,6 +42,8 @@ const createUser = async (req, res) => {
         const saltRounds = 10;
         const hashedPassword = await bcrypt.hash(password, saltRounds);
 
+        const dob = parsingDOB(dateOfBirth);
+
         // Create user
         const newUser = await User.createUser({
             firstName,
@@ -46,7 +52,10 @@ const createUser = async (req, res) => {
             email,
             password:hashedPassword,
             phoneNumber,
-            address
+            address,
+            wardNumber,
+            dateOfBirth: dob,
+            gender
         });
 
         const token = generateToken(newUser);
