@@ -29,7 +29,20 @@ model User {
   dateOfBirth    DateTime @db.Date
   createdAt      DateTime  @default(now())
   updatedAt      DateTime  @updatedAt
-  issue          issue[]
+  issues         issue[]
+}
+
+model Official {
+  id             Int       @id @default(autoincrement())
+  role           Role      @default(OFFICIAL)
+  GovernmentId   String    @unique
+  username       String    @unique
+  email          String    @unique
+  password       String
+  designation    String
+  phoneNumber    String    @unique
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
 }
 
 
@@ -41,36 +54,9 @@ model issue {
   description   String
   Address       String
   status        IssuedStatus @default(PENDING)
-  user          User @relation(fields: [userId], references: [id], onDelete: Cascade)
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
-
-  issueResponse issueResponse[]
-
-  Official Official[]
-}
-
-// Enum for issue status
-enum IssuedStatus {
-  PENDING
-  IN_PROGRESS
-  RESOLVED
-  CLOSED
-}
-
-model Official {
-  role           Role      @default(OFFICIAL)
-  id             Int       @id @default(autoincrement())
-  GovernmentId   String    @unique
-  username       String    @unique
-  email          String    @unique
-  password       String
-  designation    String
-  phoneNumber    String    @unique
-  createdAt      DateTime  @default(now())
-  updatedAt      DateTime  @updatedAt
-  issueResponse issueResponse[]
-  issue         issue[]
+  user          User @relation(fields: [userId], references: [id])
 }
 
 model issueResponse {
@@ -79,12 +65,6 @@ model issueResponse {
    adminId    Int
    message    String
    createdAt  DateTime @default(now())
-
-  issue     issue @relation(fields: [issueId], references: [id])
-  official  Official @relation(fields: [adminId], references: [id])
-
-    @@index([issueId])
-    @@index([adminId])
 }
 
 // Events in the Area
@@ -102,4 +82,12 @@ model events {
 enum Role {
   USER
   OFFICIAL
+}
+
+// Enum for issue status
+enum IssuedStatus {
+  PENDING
+  IN_PROGRESS
+  RESOLVED
+  CLOSED
 }
