@@ -5,6 +5,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');
 const userRoutes = require('./routes/User/userRoutes'); // Import user routes
+const officialRoutes = require('./routes/Official/officialRoutes');
 
 const http = require('http');
 const { PrismaClient } = require('@prisma/client');
@@ -31,6 +32,7 @@ app.get('/', (req, res) => {
 
 //Routes
 app.use('/api',userRoutes);
+app.use('/api',officialRoutes);
 
 // Start Server
 const server = http.createServer(app);
